@@ -2,9 +2,15 @@ import styles from "../styles/Home.module.css";
 import { NextSeo } from "next-seo";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import Slider from "../components/slider";
+const alphanumericCheck = (input) => {
+	return /^[a-zA-Z0-9]+$/.test(input);
+};
 
 export default function Home() {
 	const [confessionText, setConfessionText] = useState("");
+	const [wordLength, setWordLength] = useState(400);
+	const [jassoBranch, setJassoBranch] = useState("OSAKA");
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
@@ -23,11 +29,13 @@ export default function Home() {
 		};
 		fetchConfessions();
 	}, []);
+
 	const handleSubmission = async () => {
-		if (confessionText.length < 5 || confessionText.length > 400) {
-			toast.error("Confession must be between 5 and 400 characters.");
-			return;
-		}
+		if (confessionText.length < 10 || confessionText.length > 400)
+			return toast.error("Confession must be between 10 and 400 characters.");
+		if (!alphanumericCheck(confessionText))
+			return toast.error("Confession must be alphanumeric only.");
+
 		const post = await fetch("http://localhost:3001/api/v1/post", {
 			method: "POST",
 			headers: {
@@ -35,7 +43,7 @@ export default function Home() {
 			},
 			body: JSON.stringify({
 				message: confessionText,
-				branch: "TOKYO",
+				branch: jassoBranch,
 			}),
 			credentials: "include",
 		}).catch((err) => {
@@ -48,9 +56,13 @@ export default function Home() {
 		const postjson = await post.json();
 		if (postjson.isValid === true) {
 			setConfessionText("");
+			setWordLength(400);
 			toast.success("Confession posted successfully!");
+		} else {
+			toast.error("Something went wrong! Please try again.");
 		}
 	};
+
 	return (
 		<>
 			<NextSeo
@@ -71,10 +83,22 @@ export default function Home() {
 							value={confessionText}
 							onChange={(e) => {
 								setConfessionText(e.target.value);
+								setWordLength(400 - e.target.value.length);
 							}}
 						/>
+						<p>{wordLength} Characters Left</p>
+						<div className={styles.sliderdiv}>
+							<Slider
+								jassoBranch={jassoBranch}
+								setJassoBranch={setJassoBranch}
+							/>
+							{/* <h5>{jassoBranch === "OSAKA" ? "Osaka" : "Tokyo"}</h5> */}
+						</div>
 						<button
 							type="submit"
+							disabled={
+								confessionText.length < 10 || confessionText.length > 400
+							}
 							onClick={() => {
 								handleSubmission();
 							}}
