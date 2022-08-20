@@ -1,24 +1,33 @@
 import styles from "../styles/Home.module.css";
 import { NextSeo } from "next-seo";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function Home() {
 	const [confessionText, setConfessionText] = useState("");
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
-			await fetch("http://localhost:3001/", {
+			const prefetch = await fetch("http://localhost:3001/", {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 				},
+			}).catch((err) => {
+				return undefined;
 			});
+			if (prefetch === undefined) {
+				return toast.error("Something went wrong! Please try again.");
+			}
+			return;
 		};
 		fetchConfessions();
 	}, []);
 	const handleSubmission = async () => {
-		if (confessionText.length < 5 || confessionText.length > 400)
-			alert("Confession must be between 5 and 400 characters");
+		if (confessionText.length < 5 || confessionText.length > 400) {
+			toast.error("Confession must be between 5 and 400 characters.");
+			return;
+		}
 		const post = await fetch("http://localhost:3001/api/v1/post", {
 			method: "POST",
 			headers: {
@@ -26,13 +35,20 @@ export default function Home() {
 			},
 			body: JSON.stringify({
 				message: confessionText,
+				branch: "TOKYO",
 			}),
 			credentials: "include",
+		}).catch((err) => {
+			return undefined;
 		});
+		if (post === undefined) {
+			if (err) toast.error("Something went wrong! Please try again.");
+			return;
+		}
 		const postjson = await post.json();
 		if (postjson.isValid === true) {
 			setConfessionText("");
-			alert("Successfully submitted confession");
+			toast.success("Confession posted successfully!");
 		}
 	};
 	return (
