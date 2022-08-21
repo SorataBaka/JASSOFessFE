@@ -92,7 +92,6 @@ export default function Home() {
 								jassoBranch={jassoBranch}
 								setJassoBranch={setJassoBranch}
 							/>
-							{/* <h5>{jassoBranch === "OSAKA" ? "Osaka" : "Tokyo"}</h5> */}
 						</div>
 						<button
 							type="submit"
