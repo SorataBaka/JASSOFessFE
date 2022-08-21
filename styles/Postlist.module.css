@@ -18,7 +18,14 @@
 	display: flex;
 	flex-direction: column;
 }
+.postcontainer:hover {
+	background-color: rgba(255, 255, 255, 0.8);
+	cursor: pointer;
+}
 
 .lastconfession {
+	margin-bottom: 20px;
+}
+.confessionText {
 	margin-bottom: 20px;
 }

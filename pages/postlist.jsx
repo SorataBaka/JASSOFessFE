@@ -1,6 +1,7 @@
 import styles from "../styles/Postlist.module.css";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+import { NextSeo } from "next-seo";
 export default function PostList() {
 	const [pageNumber, setPageNumber] = useState(1);
 	const [posts, setPosts] = useState([]);
@@ -51,41 +52,67 @@ export default function PostList() {
 				setIsLoading(false);
 			});
 	};
+	const downloadImage = async (postid) => {
+		const data = await fetch(`http://localhost:3001/api/v1/generate/${postid}`);
+		const blob = await data.blob();
+		const url = window.URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.setAttribute("download", `${postid}.png`);
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+	};
 	useEffect(() => {
 		fetchPosts();
 		//eslint-disable-next-line
 	}, [pageNumber]);
 
 	return (
-		<div className={styles.maincontainer}>
-			{posts.map((post, index) => {
-				if (index === posts.length - 1) {
-					return (
-						<div
-							className={styles.postcontainer}
-							key={index}
-							ref={lastPostElementRef}
-						>
-							<p>{post.confession}</p>
-							<h4>Posted At: {new Date(post.createdAt).toDateString()}</h4>
-							<h5>Branch: {post.branch === "OSAKA" ? "Osaka" : "Tokyo"}</h5>
-						</div>
-					);
-				} else {
-					return (
-						<div className={styles.postcontainer} key={index}>
-							<p>{post.confession}</p>
-							<h4>Posted At: {new Date(post.createdAt).toDateString()}</h4>
-							<h5>Branch: {post.branch === "OSAKA" ? "Osaka" : "Tokyo"}</h5>
-						</div>
-					);
-				}
-			})}
-			{isLoading && <div>Loading...</div>}
-			{isLastPage && (
-				<div className={styles.lastconfession}>No more confessions</div>
-			)}
-			{isError && <div>Failed to fetch more confessions...</div>}
-		</div>
+		<>
+			<NextSeo
+				title="Jasso Confession"
+				description="Find out what students living in the JASSO Dormitory have to say about their experience at JASSO"
+			/>
+			<div className={styles.maincontainer}>
+				{posts.map((post, index) => {
+					if (index === posts.length - 1) {
+						return (
+							<div
+								className={styles.postcontainer}
+								key={index}
+								ref={lastPostElementRef}
+								onClick={() => {
+									downloadImage(post._id);
+								}}
+							>
+								<p className={styles.confessionText}>{post.confession}</p>
+								<h5>Posted At: {new Date(post.createdAt).toLocaleString()}</h5>
+								<h5>Branch: {post.branch === "OSAKA" ? "Osaka" : "Tokyo"}</h5>
+							</div>
+						);
+					} else {
+						return (
+							<div
+								className={styles.postcontainer}
+								key={index}
+								onClick={() => {
+									downloadImage(post._id);
+								}}
+							>
+								<p className={styles.confessionText}>{post.confession}</p>
+								<h5>Posted At: {new Date(post.createdAt).toLocaleString()}</h5>
+								<h5>Branch: {post.branch === "OSAKA" ? "Osaka" : "Tokyo"}</h5>
+							</div>
+						);
+					}
+				})}
+				{isLoading && <div>Loading...</div>}
+				{isLastPage && (
+					<div className={styles.lastconfession}>No more confessions</div>
+				)}
+				{isError && <div>Failed to fetch more confessions...</div>}
+			</div>
+		</>
 	);
 }

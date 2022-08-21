@@ -3,9 +3,6 @@ import { NextSeo } from "next-seo";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Slider from "../components/slider";
-const alphanumericCheck = (input) => {
-	return /^[a-zA-Z0-9]+$/.test(input);
-};
 
 export default function Home() {
 	const [confessionText, setConfessionText] = useState("");
@@ -33,8 +30,6 @@ export default function Home() {
 	const handleSubmission = async () => {
 		if (confessionText.length < 10 || confessionText.length > 400)
 			return toast.error("Confession must be between 10 and 400 characters.");
-		if (!alphanumericCheck(confessionText))
-			return toast.error("Confession must be alphanumeric only.");
 
 		const post = await fetch("http://localhost:3001/api/v1/post", {
 			method: "POST",
