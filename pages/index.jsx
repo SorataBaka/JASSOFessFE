@@ -51,8 +51,10 @@ export default function Home() {
 			toast.error("Something went wrong! Please try again.");
 			return;
 		}
-		const postjson = await post.json();
-		if (postjson.isValid === true) {
+		const postjson = await post.json().catch(() => {
+			return undefined;
+		});
+		if (postjson.isValid === true || postjson === undefined) {
 			setConfessionText("");
 			setWordLength(400);
 			toast.success("Confession posted successfully!");
