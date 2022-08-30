@@ -26,7 +26,9 @@ export default function PostList() {
 
 	const fetchPosts = () => {
 		if (isLastPage) return;
-		fetch(`http://localhost:3001/api/v1/list?page=${pageNumber}`)
+		fetch(
+			`https://api.jassofess.tianharjuno.com/api/v1/list?page=${pageNumber}`
+		)
 			.then((res) => res.json())
 			.then((data) => {
 				if (!data.isValid) {
