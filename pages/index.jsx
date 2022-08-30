@@ -48,7 +48,7 @@ export default function Home() {
 			return undefined;
 		});
 		if (post === undefined) {
-			if (err) toast.error("Something went wrong! Please try again.");
+			toast.error("Something went wrong! Please try again.");
 			return;
 		}
 		const postjson = await post.json();
