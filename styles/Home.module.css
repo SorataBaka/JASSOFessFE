@@ -5,7 +5,6 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: #2b2b2b;
 }
 
 .inputContainer {
@@ -38,6 +37,8 @@
 	outline: none;
 	border: none;
 	margin-bottom: 5px;
+	background-color: white;
+	color: black;
 }
 .inputContainer form input:focus {
 	border: none;
@@ -55,14 +56,14 @@
 	width: 50%;
 	height: auto;
 	padding: 10px;
-	border-radius: 9px;
+	border-radius: 20px;
 	outline: none;
 	border: none;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: rgb(98, 98, 252);
+	background-color: rgb(104, 104, 255);
 }
 .inputContainer button:active {
 	background-color: #32777e;
@@ -88,5 +89,5 @@
 	justify-content: flex-start;
 	align-items: center;
 	width: 100%;
-	margin-bottom: 5px;
+	margin-bottom: 20px;
 }

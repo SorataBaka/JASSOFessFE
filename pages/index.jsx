@@ -77,7 +77,7 @@ export default function Home() {
 					>
 						<input
 							type="text"
-							placeholder="Let it out here!"
+							placeholder="Tell us anonymously!"
 							value={confessionText}
 							onChange={(e) => {
 								setConfessionText(e.target.value);
