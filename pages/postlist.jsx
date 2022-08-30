@@ -53,7 +53,9 @@ export default function PostList() {
 			});
 	};
 	const downloadImage = async (postid) => {
-		const data = await fetch(`http://localhost:3001/api/v1/generate/${postid}`);
+		const data = await fetch(
+			`https://api.jassofess.tianharjuno.com/api/v1/generate/${postid}`
+		);
 		const blob = await data.blob();
 		const url = window.URL.createObjectURL(blob);
 		const link = document.createElement("a");

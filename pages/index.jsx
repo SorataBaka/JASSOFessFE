@@ -11,7 +11,7 @@ export default function Home() {
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
-			const prefetch = await fetch("http://localhost:3001/", {
+			const prefetch = await fetch("https://api.jassofess.tianharjuno.com/", {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -31,17 +31,20 @@ export default function Home() {
 		if (confessionText.length < 10 || confessionText.length > 400)
 			return toast.error("Confession must be between 10 and 400 characters.");
 
-		const post = await fetch("http://localhost:3001/api/v1/post", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				message: confessionText,
-				branch: jassoBranch,
-			}),
-			credentials: "include",
-		}).catch((err) => {
+		const post = await fetch(
+			"https://api.jassofess.tianharjuno.com/api/v1/post",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					message: confessionText,
+					branch: jassoBranch,
+				}),
+				credentials: "include",
+			}
+		).catch((err) => {
 			return undefined;
 		});
 		if (post === undefined) {
