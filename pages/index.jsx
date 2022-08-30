@@ -2,6 +2,7 @@ import styles from "../styles/Home.module.css";
 import { NextSeo } from "next-seo";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
 import Slider from "../components/slider";
 
 export default function Home() {
@@ -11,17 +12,17 @@ export default function Home() {
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
-			const prefetch = await fetch("https://api.jassofess.tianharjuno.com/", {
+			const prefetch = await axios.request({
 				method: "GET",
+				url: "https://api.jassofess.tianharjuno.com/",
 				headers: {
 					"Content-Type": "application/json",
+					Accept: "application/json",
 				},
-			}).catch((err) => {
-				return undefined;
+				withCredentials: true,
 			});
-			if (prefetch === undefined) {
-				return toast.error("Something went wrong! Please try again.");
-			}
+			const cookies = prefetch.headers;
+			console.log(prefetch.data, prefetch.headers);
 			return;
 		};
 		fetchConfessions();
@@ -30,31 +31,28 @@ export default function Home() {
 	const handleSubmission = async () => {
 		if (confessionText.length < 10 || confessionText.length > 400)
 			return toast.error("Confession must be between 10 and 400 characters.");
-
-		const post = await fetch(
-			"https://api.jassofess.tianharjuno.com/api/v1/post",
-			{
+		const newpost = await axios
+			.request({
+				url: "https://api.jassofess.tianharjuno.com/api/v1/post",
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
+				data: {
 					message: confessionText,
 					branch: jassoBranch,
-				}),
-				credentials: "include",
-			}
-		).catch((err) => {
-			return undefined;
-		});
-		if (post === undefined) {
+				},
+				withCredentials: true,
+			})
+			.catch((err) => {
+				return undefined;
+			});
+		if (newpost === undefined) {
 			toast.error("Something went wrong! Please try again.");
 			return;
 		}
-		const postjson = await post.json().catch(() => {
-			return undefined;
-		});
-		if (postjson.isValid === true || postjson === undefined) {
+		const postjson = newpost.data;
+		if (postjson.isValid === true) {
 			setConfessionText("");
 			setWordLength(400);
 			toast.success("Confession posted successfully!");

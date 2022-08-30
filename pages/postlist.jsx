@@ -2,6 +2,7 @@ import styles from "../styles/Postlist.module.css";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { NextSeo } from "next-seo";
+import axios from "axios";
 export default function PostList() {
 	const [pageNumber, setPageNumber] = useState(1);
 	const [posts, setPosts] = useState([]);
@@ -24,35 +25,35 @@ export default function PostList() {
 		[isLoading, isLastPage]
 	);
 
-	const fetchPosts = () => {
+	const fetchPosts = async () => {
 		if (isLastPage) return;
-		fetch(
-			`https://api.jassofess.tianharjuno.com/api/v1/list?page=${pageNumber}`
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				if (!data.isValid) {
-					toast.error("Something went wrong");
-					setIsError(true);
-					setIsLoading(false);
-					return;
-				}
-				if (data.data.length === 0) {
-					setIsError(false);
-					setIsLoading(false);
-					setIsLastPage(true);
-					return;
-				}
-				setPosts((post) => {
-					//remove duplicates
-					return [...new Set([...post, ...data.data.confessions])];
-				});
-				setIsLoading(false);
+		const newposts = await axios
+			.request({
+				method: "GET",
+				url: `https://api.jassofess.tianharjuno.com/api/v1/list?page=${pageNumber}`,
 			})
 			.catch((err) => {
 				setIsError(true);
 				setIsLoading(false);
+				return undefined;
 			});
+		const postdata = newposts.data || undefined;
+		if (!postdata.isValid || !postdata) {
+			toast.error("Something went wrong");
+			setIsError(true);
+			setIsLoading(false);
+			return;
+		}
+		if (postdata.data.length === 0) {
+			setIsError(false);
+			setIsLoading(false);
+			setIsLastPage(true);
+			return;
+		}
+		setPosts((post) => {
+			return [...new Set([...post, ...postdata.data.confessions])];
+		});
+		setIsLoading(false);
 	};
 	const downloadImage = async (postid) => {
 		const data = await fetch(
