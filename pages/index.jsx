@@ -9,10 +9,11 @@ export default function Home() {
 	const [confessionText, setConfessionText] = useState("");
 	const [wordLength, setWordLength] = useState(400);
 	const [jassoBranch, setJassoBranch] = useState("OSAKA");
+	const [buttonDisable, setButtonDisable] = useState(true);
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
-			const prefetch = await axios.request({
+			await axios.request({
 				method: "GET",
 				url: "https://api.jassofess.tianharjuno.com/",
 				headers: {
@@ -21,14 +22,13 @@ export default function Home() {
 				},
 				withCredentials: true,
 			});
-			const cookies = prefetch.headers;
-			console.log(prefetch.data, prefetch.headers);
 			return;
 		};
 		fetchConfessions();
 	}, []);
 
 	const handleSubmission = async () => {
+		setButtonDisable(true);
 		if (confessionText.length < 10 || confessionText.length > 400)
 			return toast.error("Confession must be between 10 and 400 characters.");
 		const newpost = await axios
@@ -47,18 +47,14 @@ export default function Home() {
 			.catch((err) => {
 				return undefined;
 			});
-		if (newpost === undefined) {
-			toast.error("Something went wrong! Please try again.");
-			return;
-		}
+		if (newpost === undefined) throw new Error("Something went wrong..");
 		const postjson = newpost.data;
 		if (postjson.isValid === true) {
 			setConfessionText("");
 			setWordLength(400);
-			toast.success("Confession posted successfully!");
-		} else {
-			toast.error("Something went wrong! Please try again.");
 		}
+		setButtonDisable(false);
+		return;
 	};
 
 	return (
@@ -94,10 +90,15 @@ export default function Home() {
 						<button
 							type="submit"
 							disabled={
-								confessionText.length < 10 || confessionText.length > 400
+								confessionText.length < 10 ||
+								confessionText.length > 400 ||
+								buttonDisable
 							}
-							onClick={() => {
-								handleSubmission();
+							onClick={async () => {
+								await toast.promise(handleSubmission(), {
+									pending: "Submitting...",
+									success: "Successfully uploaded your confession!",
+								});
 							}}
 						>
 							Submit
