@@ -9,7 +9,7 @@ export default function Home() {
 	const [confessionText, setConfessionText] = useState("");
 	const [wordLength, setWordLength] = useState(400);
 	const [jassoBranch, setJassoBranch] = useState("OSAKA");
-	const [buttonDisable, setButtonDisable] = useState(true);
+	const [buttonDisable, setButtonDisable] = useState(false);
 
 	useEffect(() => {
 		const fetchConfessions = async () => {
