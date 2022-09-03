@@ -30,7 +30,7 @@ export default function PostList() {
 		const newposts = await axios
 			.request({
 				method: "GET",
-				url: `https://api.jassofess.tianharjuno.com/api/v1/list?page=${pageNumber}`,
+				url: `https://api.jassofess.com/api/v1/list?page=${pageNumber}`,
 			})
 			.catch((err) => {
 				setIsError(true);
@@ -57,7 +57,7 @@ export default function PostList() {
 	};
 	const downloadImage = async (postid) => {
 		const data = await fetch(
-			`https://api.jassofess.tianharjuno.com/api/v1/generate/${postid}`
+			`https://api.jassofess.com/api/v1/generate/${postid}`
 		);
 		const blob = await data.blob();
 		const url = window.URL.createObjectURL(blob);

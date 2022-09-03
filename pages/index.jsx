@@ -15,7 +15,7 @@ export default function Home() {
 		const fetchConfessions = async () => {
 			await axios.request({
 				method: "GET",
-				url: "https://api.jassofess.tianharjuno.com/",
+				url: "https://api.jassofess.com/",
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -33,7 +33,7 @@ export default function Home() {
 			return toast.error("Confession must be between 10 and 400 characters.");
 		const newpost = await axios
 			.request({
-				url: "https://api.jassofess.tianharjuno.com/api/v1/post",
+				url: "https://api.jassofess.com/api/v1/post",
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
